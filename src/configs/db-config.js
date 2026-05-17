@@ -1,39 +1,20 @@
-const DBConfig = {
-    host        : 'localhost',
-    database    : 'DAI',
-    user        : 'postgres',
-    password    : 'root',
-    port        : 5432
-    //max                     : 20,       //maximum number of clients the pool should contain by default this is set to 10.
-    //idleTimeoutMillis       : 30000,
-    //connectionTimeoutMillis : 2000
-}
-console.log('configuracion hardcodeada');
+import pg from 'pg';
+import dotenv from 'dotenv';
 
-/*
-const DBConfig = {
-    host        : 'localhost',
-    database    : 'DAI',
-    user        : 'postgres',
-    password    : 'root',
-    port        : 5432
-    //max                     : 20,       //maximum number of clients the pool should contain by default this is set to 10.
-    //idleTimeoutMillis       : 30000,
-    //connectionTimeoutMillis : 2000
-}
-console.log('configuracion hardcodeada');
-*/
-/*
-const DBConfig = {
-    host        : process.env.DB_HOST       ?? '',
-    database    : process.env.DB_DATABASE   ?? '',
-    user        : process.env.DB_USER       ?? '',
-    password    : process.env.DB_PASSWORD   ?? '',
-    port        : process.env.DB_PORT       ?? 5432
-    //max                     : 20,       //maximum number of clients the pool should contain by default this is set to 10.
-    //idleTimeoutMillis       : 30000,
-    //connectionTimeoutMillis : 2000
-}
-*/
-console.log('configuracion obtenida de .env', DBConfig);
-export default DBConfig;
+dotenv.config();
+const { Pool } = pg;
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
+console.log(process.env.DATABASE_URL);
+pool.connect((err, client, release) => {
+  if (err) {
+    return console.error('Error adquiriendo el cliente', err.stack);
+  }
+  console.log('Conexión exitosa a Supabase');
+  release();
+});
+
+export default pool;

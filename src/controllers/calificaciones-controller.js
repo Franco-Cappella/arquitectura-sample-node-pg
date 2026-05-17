@@ -22,9 +22,26 @@ router.get('', async (req, res) => {
     }
 });
 
+//BUSCAR POR ALUMNO
+router.get('/alumno/:idAlumno', async (req, res) => {
+    try {
+        let idAlumno = req.params.idAlumno;
+        const returnArray = await currentService.getByAlumnoAsync(idAlumno);
+        if (returnArray != null) {
+            res.status(StatusCodes.OK).json(returnArray);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(`Error interno.`);
+        }
+    } catch (error) {
+        console.log(error);
+        const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+        res.status(statusCode).send(error.message);
+    }
+});
+
 //BUSCAR POR ID
 router.get('/:id', async (req, res) => {
-            console.log(`CalificacionesController.getById`);
+    console.log(`CalificacionesController.getById`);
 
     try {
         let id = req.params.id;
@@ -32,31 +49,56 @@ router.get('/:id', async (req, res) => {
         if (returnEntity != null){
             res.status(StatusCodes.OK).json(returnEntity);
         } else {
-            res.status(StatusCodes.NOT_FOUND).send(`No se encontro la entidad (id:${id}).`);
+            res.status(StatusCodes.NOT_FOUND).send(`No se encontró la calificación (id: ${id}).`);
         }
     } catch (error) {
         console.log(error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(`Error: ${error.message}`);
+        const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+        res.status(statusCode).send(error.message);
     }
 });
 
-//CREAR MATERIA
+//BUSCAR POR ALUMNO
+router.get('/alumno/:idAlumno', async (req, res) => {
+    try {
+        let idAlumno = req.params.idAlumno;
+        const returnArray = await currentService.getByAlumnoAsync(idAlumno);
+        if (returnArray != null) {
+            res.status(StatusCodes.OK).json(returnArray);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(`Error interno.`);
+        }
+    } catch (error) {
+        console.log(error);
+        const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+        res.status(statusCode).send(error.message);
+    }
+});
+
+//CREAR CALIFICACION
 router.post('', async (req, res) => {
     try {
-        const entity = new Materia(req.body);
+        const entity = new Calificacion(
+            req.body.id_alumno,
+            req.body.id_materia,
+            req.body.nota,
+            req.body.fecha
+        );
         const newId = await currentService.createAsync(entity);
         if (newId > 0){
-            res.status(StatusCodes.CREATED).json(newId);
+            const newEntity = await currentService.getByIdAsync(newId);
+            res.status(StatusCodes.CREATED).json(newEntity);
         } else {
             res.status(StatusCodes.BAD_REQUEST).json(null);
         }
     } catch (error) {
         console.log(error);
-        res.status(StatusCodes.BAD_REQUEST).send(`Error: ${error.message}`);
+        const statusCode = error.statusCode || StatusCodes.BAD_REQUEST;
+        res.status(statusCode).send(error.message);
     }
 });
 
-//MODIFICAR MATERIA
+//MODIFICAR CALIFICACION
 router.put('/:id', async (req, res) => {
     try {
         let id = parseInt(req.params.id);
@@ -75,26 +117,26 @@ router.put('/:id', async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        res.status(StatusCodes.BAD_REQUEST).send(`Error: ${error.message}`);
+        const statusCode = error.statusCode || StatusCodes.BAD_REQUEST;
+        res.status(statusCode).send(error.message);
     }
 });
 
-//ELIMINAR MATERIA
+//ELIMINAR CALIFICACION
 router.delete('/:id', async (req, res) => {
     try {
         let id = req.params.id;
         const rowCount = await currentService.deleteByIdAsync(id);
         if (rowCount != 0){
-            if(rowCount === -1){
-                res.status(StatusCodes.BAD_REQUEST).send(`No se puede eliminar la materia (id:${id}) porque tiene calificaciones asociadas.`);
-            }else res.status(StatusCodes.OK).json(null);
+            res.status(StatusCodes.OK).json(null);
         } 
         else {
             res.status(StatusCodes.NOT_FOUND).send(`No se encontro la entidad (id:${id}).`);
         }
     } catch (error) {
         console.log(error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(`Error: ${error.message}`);
+        const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+        res.status(statusCode).send(error.message);
     }
 });
 

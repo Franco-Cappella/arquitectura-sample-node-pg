@@ -1,21 +1,9 @@
-import pkg from 'pg'
-import config from './../configs/db-config.js';      // Traigo la configuracion de la base de datos.
+import pool from './../configs/db-config.js';
 import LogHelper from './../helpers/log-helper.js'
-
-const { Pool }  = pkg;
 
 export default class CursosRepository {
     constructor() {
-        // Se ejecuta siempre, (al instanciar la clase)
         console.log('Estoy en: CursosRepository.constructor()');
-        this.DBPool     = null;
-    }
-
-    getDBPool = () => {
-        if (this.DBPool == null){
-            this.DBPool = new Pool(config);
-        }
-        return this.DBPool;
     }
 
     getAllAsync = async () => {
@@ -24,7 +12,7 @@ export default class CursosRepository {
         
         try {
             const sql = `SELECT * FROM cursos`;
-            const resultPg = await this.getDBPool().query(sql);
+            const resultPg = await pool.query(sql);
             returnArray = resultPg.rows;
         } catch (error) {
             LogHelper.logError(error);
@@ -38,7 +26,7 @@ export default class CursosRepository {
         try {
             const sql = `SELECT * FROM cursos WHERE id=$1`;
             const values = [id];
-            const resultPg = await this.getDBPool().query(sql, values);
+            const resultPg = await pool.query(sql, values);
             if (resultPg.rows.length > 0){
                 returnEntity = resultPg.rows[0];
             }
@@ -55,7 +43,7 @@ export default class CursosRepository {
         try {
             const sql = `INSERT INTO cursos (nombre) VALUES ($1) RETURNING id`;
             const values = [entity?.nombre ?? ''];
-            const resultPg = await this.getDBPool().query(sql, values);
+            const resultPg = await pool.query(sql, values);
             newId = resultPg.rows[0].id;
         } catch (error) {
             LogHelper.logError(error);
@@ -71,7 +59,7 @@ export default class CursosRepository {
         try {
             const sql = `UPDATE cursos SET nombre = $2 WHERE id = $1`;
             const values = [id, entity?.nombre ?? ''];
-            const resultPg = await this.getDBPool().query(sql, values);
+            const resultPg = await pool.query(sql, values);
             rowsAffected = resultPg.rowCount;
         } catch (error) {
             LogHelper.logError(error);
@@ -86,7 +74,7 @@ export default class CursosRepository {
         try {
             const sql = `DELETE FROM cursos WHERE id=$1`;
             const values = [id];
-            const resultPg = await this.getDBPool().query(sql, values);
+            const resultPg = await pool.query(sql, values);
             rowsAffected = resultPg.rowCount;
         } catch (error) {
             LogHelper.logError(error);

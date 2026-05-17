@@ -4,7 +4,6 @@ export default class MateriasService {
     constructor() {
         console.log('Estoy en: MateriasService.constructor()');
         this.MateriasRepository = new MateriasRepository();
-        this.CalificacionesService = new CalificacionesService();
     }
     
     getAllAsync() {
@@ -32,7 +31,8 @@ export default class MateriasService {
     deleteByIdAsync = async (id) => {
         console.log(`ELIMINANDO POR ID: MateriasService.deleteByIdAsync(${id})`);
         let returnValue = null;
-        const verificationRows = await this.CalificacionesService.getByMateriasIdAsync(id);
+        const calificacionesService = new CalificacionesService();
+        const verificationRows = await calificacionesService.getByMateriasIdAsync(id);
         if (verificationRows.length > 0){
             returnValue = -1;
         }

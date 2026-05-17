@@ -1,5 +1,5 @@
 -- Tabla cursos
-CREATE TABLE cursos (
+CREATE TABLE IF NOT EXISTS cursos (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(75) NOT NULL
 );

@@ -1,22 +1,10 @@
-import pkg from 'pg'
 import LogHelper from './../helpers/log-helper.js'
-import config from './../configs/db-config.js';      // Traigo la configuracion de la base de datos.
+import pool from './../configs/db-config.js';      // Traigo la configuracion de la base de datos.
 
-
-const { Pool } = pkg;
 
 export default class MateriasRepository {
     constructor() {
-        // Se ejecuta siempre, (al instanciar la clase)
-        console.log('Estoy en: AlumnosRepository.constructor()');
-        this.DBPool     = null;
-    }
-
-       getDBPool = () => {
-        if (this.DBPool == null){
-            this.DBPool = new Pool(config);
-        }
-        return this.DBPool;
+        console.log('Estoy en: MateriasRepository.constructor()');
     }
 
     getAllAsync = async () => {
@@ -25,7 +13,7 @@ export default class MateriasRepository {
 
         try {
             const sql = `SELECT * FROM materias`;
-            const resultPg = await this.getDBPool().query(sql);
+            const resultPg = await pool.query(sql);
             returnArray = resultPg.rows;
         } catch (error) {
             LogHelper.logError(error);
@@ -40,7 +28,7 @@ export default class MateriasRepository {
         try {
             const sql = `SELECT * FROM materias WHERE id = $1`;
             const values = [id];
-            const resultPg = await this.getDBPool().query(sql, values);
+            const resultPg = await pool.query(sql, values);
             if (resultPg.rows.length > 0) {
                 returnEntity = resultPg.rows[0];
             }
@@ -62,7 +50,7 @@ export default class MateriasRepository {
                         ) RETURNING id`;
             const values =  [   entity?.nombre              ?? ''
                             ];
-            const resultPg = await this.getDBPool().query(sql, values);
+            const resultPg = await pool.query(sql, values);
             newId = resultPg.rows[0].id;
         } catch (error) {
             LogHelper.logError(error);
@@ -85,7 +73,7 @@ export default class MateriasRepository {
             const values =  [   id,     
                                 entity?.nombre              ?? previousEntity?.nombre
                             ];
-            const resultPg = await this.getDBPool().query(sql, values);
+            const resultPg = await pool.query(sql, values);
 
             rowsAffected = resultPg.rowCount;
         } catch (error) {
@@ -101,7 +89,7 @@ export default class MateriasRepository {
         try {
             const sql = `DELETE FROM materias WHERE id = $1`;
             const values = [id];
-            const resultPg = await this.getDBPool().query(sql, values);
+            const resultPg = await pool.query(sql, values);
             rowsAffected = resultPg.rowCount;
         } catch (error) {
             LogHelper.logError(error);

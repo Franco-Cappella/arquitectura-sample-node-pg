@@ -2,10 +2,10 @@ import fs from 'fs';
 
 class LogHelper {
     constructor() {
-        this.filePath               = process.env.LOG_FILE_PATH;
-        this.fileName               = process.env.LOG_FILE_NAME;
-        this.logToFileEnabled       = process.env.LOG_TO_FILE_ENABLED.toLowerCase() === 'true';
-        this.logToConsoleEnabled    = process.env.LOG_TO_CONSOLE_ENABLED.toLowerCase() === 'true';
+        this.filePath               = process.env.LOG_FILE_PATH ?? './logs/';
+        this.fileName               = process.env.LOG_FILE_NAME ?? '';
+        this.logToFileEnabled       = (process.env.LOG_TO_FILE_ENABLED ?? 'false').toLowerCase() === 'true';
+        this.logToConsoleEnabled    = (process.env.LOG_TO_CONSOLE_ENABLED ?? 'true').toLowerCase() === 'true';
     }
 
     /**
