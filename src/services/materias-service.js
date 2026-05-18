@@ -18,6 +18,12 @@ export default class MateriasService {
     
     createAsync = async (entity) => {
         console.log(`CREANDO MATERIA: MateriasService.createAsync(${JSON.stringify(entity)})`);
+        const array = [await this.getAllAsync()]
+        if(array.includes(entity.nombre)){
+            const error = new Error(`El nombre que se le quiere asignar a la materia ya existe`)
+                error.statusCode = 400 // Bad Request
+                throw error
+        }
         const newId = await this.MateriasRepository.createAsync(entity);
         return newId;
     }

@@ -2,6 +2,7 @@ import AlumnosRepository from '../repositories/alumnos-repository.js';
 //import AlumnosRepository from '../repositories/alumnos-repository-new.js';
 import CursosService from './cursos-service.js';
 
+
 function calcularEdad(fechaNacimiento) {
     if (!fechaNacimiento) return null;
     const hoy = new Date();
@@ -29,6 +30,7 @@ export default class AlumnosService {
     getAllAsync = async () => {
         console.log(`AlumnosService.getAllAsync()`);
         const returnArray = await this.AlumnosRepository.getAllAsync();
+        
         if (returnArray == null) return null;
         return returnArray.map(alumno => agregarEdad(alumno));
     }

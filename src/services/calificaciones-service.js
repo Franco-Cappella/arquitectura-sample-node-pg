@@ -81,6 +81,15 @@ export default class CalificacionesService {
                 throw error;
             }
         }
+        if(entity.fecha !== undefined && entity.fecha !== null){
+            const fechaActual = new Date()
+            const fecha = new Date(entity.fecha) 
+            if(fecha > fechaActual){
+                const error = new Error(`La fecha debe ser menor o igual a ${fechaActual .toLocaleDateString()}`)
+                error.statusCode = 400 // Bad Request
+                throw error
+            }
+        }
 
         return await this.CalificacionesRepository.updateAsync(entity);
     }
